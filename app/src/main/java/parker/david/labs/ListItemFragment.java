@@ -3,6 +3,9 @@ package parker.david.labs;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +23,8 @@ public class ListItemFragment extends Fragment {
     private  static  final  String ARG_INDEX = "index";
 
     private  int mIndex;
+    MyViewModel myViewModel;
+    View mInflatedView;
 
     public  int getShownIndex() {
         return  mIndex;
@@ -46,6 +51,8 @@ public class ListItemFragment extends Fragment {
         if (getArguments() != null) {
             mIndex = getArguments().getInt(ARG_INDEX);
         }
+        myViewModel = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
+        myViewModel.selectItem(mIndex);
     }
 
     @Override
@@ -53,9 +60,15 @@ public class ListItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Log.i(this.getClass().getSimpleName() + " Observer", "onCreateView");
-        View inflatedView = inflater.inflate(R.layout.fragment_list_item,container,false);
-        TextView text = inflatedView.findViewById(R.id.listItemTextView);
-        text.setText(DummyData.DATA_CONTENT[mIndex]);
-        return inflatedView;
+        mInflatedView = inflater.inflate(R.layout.fragment_list_item,container,false);
+        final Observer<Item> itemObserver = new Observer<Item>() {
+            @Override
+            public void onChanged(Item item) {
+                TextView text = (TextView) mInflatedView.findViewById(R.id.listItemTextView);
+                text.setText(item.getDescription());
+            }
+        };
+        myViewModel.getSelectedItem().observe(this,itemObserver);
+        return mInflatedView;
     }
 }
