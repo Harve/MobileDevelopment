@@ -2,6 +2,7 @@ package parker.david.labs;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -64,6 +66,8 @@ public class ListItemFragment extends Fragment {
         final Observer<Item> itemObserver = new Observer<Item>() {
             @Override
             public void onChanged(Item item) {
+                ImageView image = (ImageView) mInflatedView.findViewById(R.id.imageView_image);
+                image.setImageBitmap(item.getImage());
                 TextView text = (TextView) mInflatedView.findViewById(R.id.listItemTextView);
                 text.setText(item.getDescription());
             }
@@ -71,4 +75,6 @@ public class ListItemFragment extends Fragment {
         myViewModel.getSelectedItem().observe(this,itemObserver);
         return mInflatedView;
     }
+
+   
 }
