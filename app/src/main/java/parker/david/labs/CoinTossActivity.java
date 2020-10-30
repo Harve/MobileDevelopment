@@ -4,7 +4,9 @@ package parker.david.labs;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -25,7 +27,15 @@ public class CoinTossActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         String name = extras.getString("ExtraName");
-        Toast.makeText(getApplicationContext(),"This is the extra string that we passed in: " + name,Toast.LENGTH_LONG).show();
+
+
+        int numberOfTosses = retrievePreviousTosses();
+        if(numberOfTosses ==-1){
+            numberOfTosses=1;
+        }
+        else {numberOfTosses++;}
+        Toast.makeText(getApplicationContext(),"This coin has been tossed off: " + numberOfTosses +" times.",Toast.LENGTH_LONG).show();
+        storePreviousTosses(numberOfTosses);
     }
 
     @Override
@@ -62,4 +72,22 @@ public class CoinTossActivity extends AppCompatActivity {
         }
         return  "Tails!";
     }
+
+    private void storePreviousTosses(int pNumberOfTosses) {
+        SharedPreferences sharedPreferences = getApplication().getSharedPreferences(
+                "parker.david.labs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("numberOfTosses",pNumberOfTosses
+        );
+        editor.commit();
+    }
+
+    private  int retrievePreviousTosses() {
+        int previousTosses = 0;
+        SharedPreferences sharedPreferences =
+                this.getApplication().getSharedPreferences("parker.david.labs",Context.MODE_PRIVATE);
+        previousTosses = sharedPreferences.getInt("numberOfTosses",-1);
+        return previousTosses;
+    }
+
 }
